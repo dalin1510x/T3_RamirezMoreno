@@ -1,0 +1,60 @@
+CREATE DATABASE EXAMENFINAL;
+
+USE EXAMENFINAL;
+GO
+
+CREATE TABLE tb_Consumidor (
+    dnicont CHAR(8) PRIMARY KEY,
+    nomcont VARCHAR(40) NOT NULL,
+    apecont VARCHAR(40) NOT NULL,
+    emailcont VARCHAR(250) UNIQUE,
+    idpais CHAR(3)
+);
+GO
+
+CREATE OR ALTER PROCEDURE usp_agrega_consumidor
+    @dnicont CHAR(8), @nomcont VARCHAR(40), @apecont VARCHAR(40), @emailcont VARCHAR(250), @idpais CHAR(3),
+    @mensaje VARCHAR(100) OUTPUT
+AS
+BEGIN
+    IF ISNUMERIC(@dnicont) = 0 OR LEN(RTRIM(@dnicont)) <> 8
+    BEGIN
+        SET @mensaje = 'Error';
+        RETURN;
+    END
+    IF RTRIM(@nomcont) = '' OR RTRIM(@apecont) = ''
+    BEGIN
+        SET @mensaje = 'Error';
+        RETURN;
+    END
+
+    INSERT INTO tb_Consumidor VALUES (@dnicont, @nomcont, @apecont, @emailcont, @idpais);
+    SET @mensaje = 'Exito';
+END;
+GO
+
+CREATE OR ALTER PROCEDURE usp_eliminar_consumidor
+    @dnicont CHAR(8)
+AS
+BEGIN
+    DELETE FROM tb_Consumidor WHERE dnicont = @dnicont;
+END;
+GO
+
+CREATE OR ALTER PROCEDURE usp_buscar_consumidor
+    @dnicont CHAR(8)
+AS
+BEGIN
+    SELECT dnicont, nomcont, apecont, emailcont, idpais FROM tb_Consumidor WHERE dnicont = @dnicont;
+END;
+GO
+
+CREATE OR ALTER PROCEDURE usp_actualizar_consumidor
+    @dnicont CHAR(8), @nomcont VARCHAR(40), @apecont VARCHAR(40), @emailcont VARCHAR(250), @idpais CHAR(3)
+AS
+BEGIN
+    UPDATE tb_Consumidor 
+    SET nomcont = @nomcont, apecont = @apecont, emailcont = @emailcont, idpais = @idpais
+    WHERE dnicont = @dnicont;
+END;
+GO
